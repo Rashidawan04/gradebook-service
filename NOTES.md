@@ -58,10 +58,16 @@ when calculating the report.
 
 ## (e) Mark for nonexistent assessment
 
-Result:
+Test: POST a mark for student `S1` with assessment `NOPE`.
 
-The old service accepts the mark when the student exists, even though the
-assessment does not exist.
+Actual result:
+
+HTTP/1.0 404 Not Found
+
+{"error": "assessment not found"}
+
+Observation: The service rejected the mark because the assessment does not exist and returned HTTP 404.
+
 
 
 ## Why gradebook.json was deleted
