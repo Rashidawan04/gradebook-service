@@ -1,3 +1,4 @@
+
 class GradebookError(Exception):
     """Base exception for gradebook errors."""
 
