@@ -83,3 +83,16 @@ The bare except statements were found at:
 - Line 18
 - Line 26
 - Line 79
+
+
+## Task 8 — Model Tests
+
+Command: `python -m pytest -q`
+
+Result: 8 passed
+
+### Static checks
+
+- `python -m mypy gradebook.py` — passed
+- `python -m mypy --strict errors.py models.py` — passed
+- `ruff check .` — passed
