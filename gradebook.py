@@ -1,13 +1,15 @@
-import datetime
 import http.server
 import json
 import logging
 import sys
-from typing import Any, Callable
+from collections.abc import Callable
+from datetime import datetime, timezone
+from typing import Any
 
 from errors import ConflictError, NotFoundError, ValidationError
 from models import parse_assessment, parse_mark, parse_student
 
+logger = logging.getLogger(__name__)
 
 DATA = "gradebook.json"
 
@@ -62,7 +64,7 @@ def pct(sid: str) -> str:
 class Handler(http.server.BaseHTTPRequestHandler):
 
     def log_message(self, format: str, *args: object) -> None:
-        logging.info(format, *args)
+        logger.info(format, *args)
 
     def _send(self, code: int, obj: object) -> None:
         body = json.dumps(obj).encode()
@@ -112,7 +114,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         except NotFoundError as error:
             self._send(404, {"error": str(error)})
         except Exception:
-            logging.exception("unexpected error")
+            logger.exception("unexpected error")
             self._send(500, {"error": "internal error"})
         else:
             self._send(status, body)
@@ -166,7 +168,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             record = {
                 "id": student.id,
                 "name": student.name,
-                "joined": str(datetime.datetime.now()),
+                "joined": str(datetime.now(timezone.utc)),
             }
 
             STATE["students"][student.id] = record
@@ -183,8 +185,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             record = {
                 "id": assessment.id,
                 "title": assessment.title,
-                "weight": data["weight"],
-                "total": data["total"],
+                "weight": str(assessment.weight),
+                "total": str(assessment.total),
             }
 
             STATE["assessments"][assessment.id] = record
@@ -210,14 +212,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
             record = {
                 "student": mark.student,
                 "assessment": mark.assessment,
-                "score": data["score"],
-                "at": str(datetime.datetime.now()),
+                "score": str(mark.score),
+                "at": str(datetime.now(timezone.utc)),
             }
-
             STATE["marks"].append(record)
             save()
 
-            logging.info(
+            logger.info(
                 "recorded mark for %s score %s",
                 mark.student,
                 mark.score,
@@ -264,7 +265,7 @@ def main(argv: list[str] | None = None) -> None:
                 "port must be a whole number from 1 to 65535"
             )
 
-    logging.info("gradebook on %s", port)
+    logger.info("gradebook on %s", port)
 
     server = http.server.HTTPServer(("", port), Handler)
     server.serve_forever()
