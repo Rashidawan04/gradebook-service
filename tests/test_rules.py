@@ -23,3 +23,7 @@ def test_weight_over_100_is_rejected():
 
 def test_weight_total_exactly_100_fits():
     ensure_weight_fits([60], 40)
+
+
+def test_decimal_weights_totaling_100_fit():
+    ensure_weight_fits([9.3, 27.3, 33.7], 29.7)
