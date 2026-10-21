@@ -131,3 +131,28 @@ the application's actual gradebook data.
 - File with the lowest coverage: `gradebook.py` (35%)
 - Test result: 27 passed in 0.39s
 
+## Task 2 — TDD Weight Rule
+
+### Cycle 1 — Empty weights
+
+- Test: `ensure_weight_fits([], 50)`
+- Initial failure message: [paste actual failure message]
+- Final result: Passed
+
+### Cycle 2 — Total exceeds 100
+
+- Test: `ensure_weight_fits([60], 50)`
+- Initial failure message: [paste actual failure message]
+- Final result: Passed; raises `ValidationError` containing "100"
+
+### Cycle 3 — Total equals 100
+
+- Test: `ensure_weight_fits([60], 40)`
+- Did it fail first? [Yes or No, based on actual result]
+- Final result: Passed
+
+### Cycle 4 — Decimal weights
+
+- Test: `ensure_weight_fits([9.3, 27.3, 33.7], 29.7)`
+- Initial failure message: [paste actual failure message, or note that it passed initially]
+- Final result: Passed with tolerance
