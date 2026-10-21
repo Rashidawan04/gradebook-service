@@ -122,3 +122,12 @@ again.
 The storage tests use pytest's `tmp_path` fixture to test
 saving and loading with real temporary files without changing
 the application's actual gradebook data.
+
+# Lab 05 Notes
+
+## Task 1 — Initial Coverage
+
+- Total coverage: 50%
+- File with the lowest coverage: `gradebook.py` (35%)
+- Test result: 27 passed in 0.39s
+
