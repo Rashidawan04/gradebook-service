@@ -1,31 +1,44 @@
 
+import pytest
+
 import gradebook
 
 
-def test_student_with_no_marks_gets_zero(loaded):
+@pytest.mark.parametrize(
+    ("marks", "expected"),
+    [
+        pytest.param([], "0", id="no-marks"),
+        pytest.param(
+            [{"student": "S1", "assessment": "A1",
+              "score": "15", "at": "2026-10-12 09:00:00"}],
+            "7.5",
+            id="quiz-score-15"
+        ),
+        pytest.param(
+            [{"student": "S1", "assessment": "A1",
+              "score": "20", "at": "2026-10-12 09:00:00"}],
+            "10.0",
+            id="quiz-full-marks"
+        ),
+        pytest.param(
+            [{"student": "S1", "assessment": "A1",
+              "score": "0", "at": "2026-10-12 09:00:00"}],
+            "0.0",
+            id="zero-score"
+        ),
+        pytest.param(
+            [
+                {"student": "S1", "assessment": "A1",
+                 "score": "15", "at": "2026-10-12 09:00:00"},
+                {"student": "S1", "assessment": "A2",
+                 "score": "40", "at": "2026-10-12 09:00:00"}
+            ],
+            "31.5",
+            id="two-assessments"
+        )
+    ]
+)
+def test_percentage_for_different_marks(loaded, marks, expected):
+    loaded["marks"] = marks
     result = gradebook.pct("S1")
-    assert result == "0"
-
-
-def test_student_with_one_quiz_mark_gets_seven_point_five(loaded):
-    loaded["marks"].append({
-        "student": "S1",
-        "assessment": "A1",
-        "score": "15",
-        "at": "2026-10-12 09:00:00"
-    })
-
-    result = gradebook.pct("S1")
-    assert result == "7.5"
-
-
-def test_mark_for_missing_assessment_is_ignored(loaded):
-    loaded["marks"].append({
-        "student": "S1",
-        "assessment": "UNKNOWN",
-        "score": "15",
-        "at": "2026-10-12 09:00:00"
-    })
-
-    result = gradebook.pct("S1")
-    assert result == "0"
+    assert result == expected
