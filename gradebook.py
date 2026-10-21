@@ -1,3 +1,4 @@
+
 import http.server
 import json
 import logging
@@ -59,6 +60,35 @@ def pct(sid: str) -> str:
         return "0"
 
     return str(round(got, 2))
+
+
+def add_mark(
+    state: dict[str, Any],
+    mark: Any,
+    now: Callable[[], str],
+    save: Callable[[], None],
+) -> None:
+    if mark.student not in state["students"]:
+        raise NotFoundError("student not found")
+
+    if mark.assessment not in state["assessments"]:
+        raise NotFoundError("assessment not found")
+
+    assessment = state["assessments"][mark.assessment]
+    assessment_total = float(assessment["total"])
+
+    if mark.score > assessment_total:
+        raise ValidationError("score must not exceed total")
+
+    record = {
+        "student": mark.student,
+        "assessment": mark.assessment,
+        "score": str(mark.score),
+        "at": now(),
+    }
+
+    state["marks"].append(record)
+    save()
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -196,35 +226,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
         if self.path == "/marks":
             mark = parse_mark(data)
-
-            if mark.student not in STATE["students"]:
-                raise NotFoundError("student not found")
-
-            if mark.assessment not in STATE["assessments"]:
-                raise NotFoundError("assessment not found")
-
-            assessment = STATE["assessments"][mark.assessment]
-            assessment_total = float(assessment["total"])
-
-            if mark.score > assessment_total:
-                raise ValidationError("score must not exceed total")
-
-            record = {
-                "student": mark.student,
-                "assessment": mark.assessment,
-                "score": str(mark.score),
-                "at": str(datetime.now(timezone.utc)),
-            }
-            STATE["marks"].append(record)
-            save()
-
+            add_mark(
+                STATE,
+                mark,
+                lambda: str(datetime.now(timezone.utc)),
+                save,
+            )
             logger.info(
                 "recorded mark for %s score %s",
                 mark.student,
                 mark.score,
             )
-
             return 200, {"ok": True}
+
 
         raise NotFoundError("route not found")
 
