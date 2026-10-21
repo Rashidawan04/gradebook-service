@@ -96,3 +96,29 @@ Result: 8 passed
 - `python -m mypy gradebook.py` — passed
 - `python -m mypy --strict errors.py models.py` — passed
 - `ruff check .` — passed
+
+
+# Lab 04 Notes
+
+## Task 8: Demonstrating Test Failure
+
+I temporarily changed the percentage calculation in `pct()`
+from division to multiplication.
+
+This caused percentage tests to fail, demonstrating that the
+tests detect incorrect calculation logic.
+
+After restoring the correct division operator, the tests passed
+again.
+
+## Test Doubles
+
+- Stub: `fixed_clock()` returns a fixed timestamp.
+- Fake: The `loaded` fixture supplies in-memory gradebook state.
+- Mock: `Mock()` replaces the save function and verifies its calls.
+
+## Temporary File Testing
+
+The storage tests use pytest's `tmp_path` fixture to test
+saving and loading with real temporary files without changing
+the application's actual gradebook data.
