@@ -156,3 +156,9 @@ the application's actual gradebook data.
 - Test: `ensure_weight_fits([9.3, 27.3, 33.7], 29.7)`
 - Initial failure message: [paste actual failure message, or note that it passed initially]
 - Final result: Passed with tolerance
+## Task 5 — Coverage Is Not Quality
+
+Full test-suite coverage: 53%.
+
+Code coverage shows which lines execute during tests, but it does not prove that the tests check the correctness of their results.
+The `pct()` function needs tests that assert its expected percentage values.
