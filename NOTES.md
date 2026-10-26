@@ -162,3 +162,7 @@ Full test-suite coverage: 53%.
 
 Code coverage shows which lines execute during tests, but it does not prove that the tests check the correctness of their results.
 The `pct()` function needs tests that assert its expected percentage values.
+
+## Task 6 — Test the Edges
+
+Changing the score comparison from `>` to `>=` caused the boundary test `test_add_mark_accepts_boundary_scores[score-equals-total]` to fail, confirming that the test detects an incorrect rejection of a score equal to the assessment total.
