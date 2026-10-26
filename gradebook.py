@@ -9,7 +9,7 @@ from typing import Any
 
 from errors import ConflictError, NotFoundError, ValidationError
 from models import parse_assessment, parse_mark, parse_student
-
+from rules import ensure_weight_fits
 logger = logging.getLogger(__name__)
 
 DATA = "gradebook.json"
@@ -89,6 +89,32 @@ def add_mark(
 
     state["marks"].append(record)
     save()
+
+def add_assessment(
+    state: dict[str, Any],
+    assessment: Assessment,
+    save: Callable[[], None],
+) -> None:
+    if assessment.id in state["assessments"]:
+        raise ConflictError("assessment already exists")
+
+    existing_weights = [
+        float(item["weight"])
+        for item in state["assessments"].values()
+    ]
+
+    ensure_weight_fits(existing_weights, assessment.weight)
+
+    record = {
+        "id": assessment.id,
+        "title": assessment.title,
+        "weight": str(assessment.weight),
+        "total": str(assessment.total),
+    }
+
+    state["assessments"][assessment.id] = record
+    save()
+
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
