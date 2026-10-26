@@ -166,3 +166,7 @@ The `pct()` function needs tests that assert its expected percentage values.
 ## Task 6 — Test the Edges
 
 Changing the score comparison from `>` to `>=` caused the boundary test `test_add_mark_accepts_boundary_scores[score-equals-total]` to fail, confirming that the test detects an incorrect rejection of a score equal to the assessment total.
+## Task 7 — Let Hypothesis Hunt
+
+Hypothesis found a failing example: `scores=REPLACE_WITH_ACTUAL_EXAMPLE`.
+The `pct()` function counts duplicate marks for the same assessment, allowing the calculated percentage to exceed that assessment's weight.s
