@@ -1,16 +1,12 @@
 
 from unittest.mock import patch
 
-import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 
 import gradebook
 from models import parse_mark
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="duplicate marks are all counted",
-)
 
 @given(
     scores=st.lists(

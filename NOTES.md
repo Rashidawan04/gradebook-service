@@ -170,3 +170,15 @@ Changing the score comparison from `>` to `>=` caused the boundary test `test_ad
 
 Hypothesis found a failing example: `scores=REPLACE_WITH_ACTUAL_EXAMPLE`.
 The `pct()` function counts duplicate marks for the same assessment, allowing the calculated percentage to exceed that assessment's weight.s
+
+### Task 8: Fix Duplicate Mark Handling
+
+**Defect fixed:** Adding a new mark for the same student and assessment now replaces the previous mark instead of storing duplicate marks.
+
+**Regression test:** Added a test to verify that adding scores 5 and 18 for the same student and assessment leaves exactly one mark with score 18.
+
+**Property-based test:** Removed the `xfail` marker from the property test and verified that the test passes after fixing the defect.
+
+**Final test coverage:** 54%
+
+**Verification:** Full test suite, coverage report, Ruff, and Mypy checks completed.

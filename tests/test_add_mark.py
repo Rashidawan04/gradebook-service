@@ -95,3 +95,35 @@ def test_invalid_mark_changes_nothing_and_does_not_save(
 
     assert loaded["marks"] == []
     save.assert_not_called()
+
+
+def test_add_mark_replaces_existing_mark_for_same_student_and_assessment(loaded):
+    from models import parse_mark
+
+    saved = []
+
+    def save():
+        saved.append(True)
+
+    now = lambda: "2026-10-12 09:00:00"
+
+    first_mark = parse_mark(
+        {
+            "student": "S1",
+            "assessment": "A1",
+            "score": 5,
+        }
+    )
+    second_mark = parse_mark(
+        {
+            "student": "S1",
+            "assessment": "A1",
+            "score": 18,
+        }
+    )
+
+    gradebook.add_mark(loaded, first_mark, now, save)
+    gradebook.add_mark(loaded, second_mark, now, save)
+
+    assert len(loaded["marks"]) == 1
+    assert loaded["marks"][0]["score"] == "18.0"

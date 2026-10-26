@@ -2,8 +2,8 @@
 import pytest
 
 from errors import ConflictError, ValidationError
-from models import Assessment
 from gradebook import add_assessment
+from models import Assessment
 
 
 def test_add_assessment_saves_valid_assessment():

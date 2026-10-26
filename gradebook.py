@@ -8,8 +8,9 @@ from datetime import datetime, timezone
 from typing import Any
 
 from errors import ConflictError, NotFoundError, ValidationError
-from models import parse_assessment, parse_mark, parse_student
+from models import Assessment, parse_assessment, parse_mark, parse_student
 from rules import ensure_weight_fits
+
 logger = logging.getLogger(__name__)
 
 DATA = "gradebook.json"
@@ -62,6 +63,7 @@ def pct(sid: str) -> str:
     return str(round(got, 2))
 
 
+
 def add_mark(
     state: dict[str, Any],
     mark: Any,
@@ -80,6 +82,17 @@ def add_mark(
     if mark.score > assessment_total:
         raise ValidationError("score must not exceed total")
 
+    # Remove the previous mark for this student and assessment.
+    state["marks"] = [
+        existing
+        for existing in state["marks"]
+        if not (
+            existing["student"] == mark.student
+            and existing["assessment"] == mark.assessment
+        )
+    ]
+
+    # Store the new mark.
     record = {
         "student": mark.student,
         "assessment": mark.assessment,
@@ -89,6 +102,7 @@ def add_mark(
 
     state["marks"].append(record)
     save()
+
 
 def add_assessment(
     state: dict[str, Any],
